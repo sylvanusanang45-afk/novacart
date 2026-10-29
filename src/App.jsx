@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 import { StoreProvider } from "./StoreContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -10,9 +10,9 @@ import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import AdminDashboard from "./pages/AdminDashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -24,10 +24,13 @@ function App() {
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
+
+        <Route path="/auth" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+
         <Route
           path="/admin"
           element={
@@ -36,6 +39,7 @@ function App() {
             </RequireAuth>
           }
         />
+
         <Route
           path="*"
           element={

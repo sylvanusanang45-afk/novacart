@@ -8,13 +8,16 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [showResend, setShowResend] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
     setMessage("");
+    setShowResend(false);
     setLoading(true);
 
     try {
@@ -23,6 +26,7 @@ function Signup() {
         password,
         options: {
           data: { full_name: name.trim() },
+          emailRedirectTo: "https://novacart-mauve.vercel.app/",
         },
       });
 
@@ -34,6 +38,7 @@ function Signup() {
         setMessage(
           "Account created. Check your email for a confirmation link before signing in."
         );
+        setShowResend(true);
       }
     } catch (err) {
       setError(
@@ -43,6 +48,36 @@ function Signup() {
       );
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleResend() {
+    setError("");
+    setMessage("");
+    setResending(true);
+
+    try {
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email: email.trim(),
+        options: {
+          emailRedirectTo: "https://novacart-mauve.vercel.app/",
+        },
+      });
+
+      if (resendError) throw resendError;
+
+      setMessage(
+        "If your account needs confirmation, a new confirmation email has been requested. Check your inbox and spam folder."
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to resend the confirmation email. Please try again."
+      );
+    } finally {
+      setResending(false);
     }
   }
 
@@ -87,12 +122,32 @@ function Signup() {
           required
         />
 
-        {error && <p className="auth-feedback auth-error" role="alert">{error}</p>}
-        {message && <p className="auth-feedback auth-success" role="status">{message}</p>}
+        {error && (
+          <p className="auth-feedback auth-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        {message && (
+          <p className="auth-feedback auth-success" role="status">
+            {message}
+          </p>
+        )}
 
         <button className="primary-button" type="submit" disabled={loading}>
           {loading ? "Creating account..." : "Create account"}
         </button>
+
+        {showResend && (
+          <button
+            className="primary-button"
+            type="button"
+            onClick={handleResend}
+            disabled={resending || loading || !email.trim()}
+          >
+            {resending ? "Sending email..." : "Resend confirmation email"}
+          </button>
+        )}
 
         <p className="auth-switch">
           Already have an account? <Link to="/login">Sign in</Link>

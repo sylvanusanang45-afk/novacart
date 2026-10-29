@@ -19,7 +19,7 @@ function ForgotPassword() {
     try {
       const { error: resetError } =
         await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${window.location.origin}/reset-password`,
+          redirectTo: "https://novacart-mauve.vercel.app/reset-password",
         });
 
       if (resetError) throw resetError;

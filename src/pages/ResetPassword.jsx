@@ -1,14 +1,16 @@
+
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 
 function ResetPassword() {
+  const navigate = useNavigate();
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingSession, setCheckingSession] = useState(true);
   const [recoveryReady, setRecoveryReady] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -23,6 +25,7 @@ function ResetPassword() {
 
         if (active) {
           setRecoveryReady(Boolean(data.session));
+
           if (!data.session) {
             setError(
               "This recovery link is invalid or has expired. Please request a new one."
@@ -36,7 +39,9 @@ function ResetPassword() {
           );
         }
       } finally {
-        if (active) setCheckingSession(false);
+        if (active) {
+          setCheckingSession(false);
+        }
       }
     }
 
@@ -62,7 +67,6 @@ function ResetPassword() {
   async function handleSubmit(event) {
     event.preventDefault();
     setError("");
-    setMessage("");
 
     if (password.length < 8) {
       setError("Your password must contain at least 8 characters.");
@@ -91,9 +95,33 @@ function ResetPassword() {
       setPassword("");
       setConfirmPassword("");
       setRecoveryReady(false);
-      setMessage(
-        "Your password has been changed successfully. You can now sign in with your new password."
-      );
+
+      // Sign out after changing the password.
+      try {
+        const { error: signOutError } =
+          await supabase.auth.signOut();
+
+        if (signOutError) {
+          console.error(
+            "Could not end the recovery session:",
+            signOutError
+          );
+        }
+      } catch (signOutError) {
+        console.error(
+          "Could not end the recovery session:",
+          signOutError
+        );
+      }
+
+      // Return to Login with a success message.
+      navigate("/login", {
+        replace: true,
+        state: {
+          message:
+            "Password changed successfully! Please sign in with your new password.",
+        },
+      });
     } catch (err) {
       setError(
         err instanceof Error
@@ -113,13 +141,6 @@ function ResetPassword() {
 
         {checkingSession ? (
           <p>Verifying your recovery link...</p>
-        ) : message ? (
-          <>
-            <p className="auth-feedback" role="status">{message}</p>
-            <p className="auth-switch">
-              <Link to="/login">Go to sign in</Link>
-            </p>
-          </>
         ) : !recoveryReady ? (
           <>
             {error && (
@@ -127,11 +148,13 @@ function ResetPassword() {
                 {error}
               </p>
             )}
-            <p>
-              Request a fresh recovery email to continue.
-            </p>
+
+            <p>Request a fresh recovery email to continue.</p>
+
             <p className="auth-switch">
-              <Link to="/forgot-password">Request a new reset link</Link>
+              <Link to="/forgot-password">
+                Request a new reset link
+              </Link>
             </p>
           </>
         ) : (
@@ -150,7 +173,9 @@ function ResetPassword() {
               required
             />
 
-            <label htmlFor="confirm-new-password">Confirm new password</label>
+            <label htmlFor="confirm-new-password">
+              Confirm new password
+            </label>
             <input
               id="confirm-new-password"
               type="password"
@@ -158,7 +183,9 @@ function ResetPassword() {
               placeholder="Enter the password again"
               minLength={8}
               value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
+              onChange={(event) =>
+                setConfirmPassword(event.target.value)
+              }
               required
             />
 

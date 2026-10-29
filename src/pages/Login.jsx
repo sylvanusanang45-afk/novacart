@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
@@ -5,10 +6,12 @@ import { supabase } from "../supabase";
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage] = useState(location.state?.message || "");
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -42,6 +45,12 @@ function Login() {
         <p className="eyebrow">WELCOME BACK</p>
         <h1>Good to see you.</h1>
         <p>Sign in to continue your NovaCart journey.</p>
+
+        {successMessage && (
+          <p className="auth-feedback auth-success" role="status">
+            {successMessage}
+          </p>
+        )}
 
         <label htmlFor="login-email">Email address</label>
         <input

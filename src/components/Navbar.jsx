@@ -19,6 +19,7 @@ function Navbar() {
   async function handleSignOut() {
     setAuthError("");
     setSigningOut(true);
+
     try {
       await signOut();
       closeMenu();
@@ -33,7 +34,10 @@ function Navbar() {
 
   return (
     <header className="navbar">
-      <div className="announcement-bar">Thoughtful finds for everyday living.</div>
+      <div className="announcement-bar">
+        Thoughtful finds for everyday living.
+      </div>
+
       <div className="navbar-inner">
         <Link to="/" className="brand-logo" onClick={closeMenu}>
           nova<span>cart.</span>
@@ -50,33 +54,76 @@ function Navbar() {
           {menuOpen ? <X /> : <Menu />}
         </button>
 
-        <nav id="primary-navigation" className={menuOpen ? "nav-links open" : "nav-links"}>
-          <NavLink to="/" onClick={closeMenu}>Home</NavLink>
-          <NavLink to="/shop" onClick={closeMenu}>Shop</NavLink>
-          <NavLink to="/wishlist" onClick={closeMenu}>Wishlist</NavLink>
-          {role === "admin" && <NavLink to="/admin" onClick={closeMenu}>Admin</NavLink>}
-          {!user && <NavLink to="/login" onClick={closeMenu}>Sign in</NavLink>}
+        <nav
+          id="primary-navigation"
+          className={menuOpen ? "nav-links open" : "nav-links"}
+        >
+          <NavLink to="/" onClick={closeMenu}>
+            Home
+          </NavLink>
+
+          <NavLink to="/shop" onClick={closeMenu}>
+            Shop
+          </NavLink>
+
+          <NavLink to="/wishlist" onClick={closeMenu}>
+            Wishlist
+          </NavLink>
+
+          {role === "admin" && (
+            <NavLink to="/admin" onClick={closeMenu}>
+              Admin
+            </NavLink>
+          )}
+
+          {!user && (
+            <NavLink to="/login" onClick={closeMenu}>
+              Sign in
+            </NavLink>
+          )}
         </nav>
 
         <div className="nav-actions">
           <Link to="/wishlist" className="nav-icon" aria-label="Wishlist">
             <Heart size={21} />
-            {wishlist.length > 0 && <span className="nav-count">{wishlist.length}</span>}
+            {wishlist.length > 0 && (
+              <span className="nav-count">{wishlist.length}</span>
+            )}
           </Link>
+
           <Link to="/cart" className="nav-icon" aria-label="Shopping cart">
             <ShoppingBag size={21} />
-            {cartCount > 0 && <span className="nav-count">{cartCount}</span>}
+            {cartCount > 0 && (
+              <span className="nav-count">{cartCount}</span>
+            )}
           </Link>
+
           {user ? (
-            <button className="nav-auth-button" type="button" onClick={handleSignOut} disabled={signingOut}>
+            <button
+              className="nav-auth-button"
+              type="button"
+              onClick={handleSignOut}
+              disabled={signingOut}
+            >
               {signingOut ? "Signing out..." : "Sign out"}
             </button>
           ) : (
-            <Link className="nav-auth-link" to="/signup" onClick={closeMenu}>Join</Link>
+            <Link
+              className="nav-auth-link"
+              to="/login"
+              onClick={closeMenu}
+            >
+              Login
+            </Link>
           )}
         </div>
       </div>
-      {authError && <p className="nav-auth-error" role="alert">{authError}</p>}
+
+      {authError && (
+        <p className="nav-auth-error" role="alert">
+          {authError}
+        </p>
+      )}
     </header>
   );
 }
