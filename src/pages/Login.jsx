@@ -65,7 +65,17 @@ function Login() {
           required
         />
 
-        {error && <p className="auth-feedback auth-error" role="alert">{error}</p>}
+        <p className="auth-switch">
+          <Link to="/forgot-password" state={{ email: email.trim() }}>
+            Forgot password?
+          </Link>
+        </p>
+
+        {error && (
+          <p className="auth-feedback auth-error" role="alert">
+            {error}
+          </p>
+        )}
 
         <button className="primary-button" type="submit" disabled={loading}>
           {loading ? "Signing in..." : "Sign in"}
