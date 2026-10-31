@@ -87,12 +87,17 @@ Deno.serve(async (req) => {
       return respond({
         message: "Payment already verified.",
         paid: true,
+        paymentStatus: "success",
         reference,
       });
     }
 
     if (order.payment_status !== "pending") {
-      return respond({ error: "Order is not awaiting payment." }, 409);
+      return respond({
+        error: "Order is not awaiting payment.",
+        paid: false,
+        paymentStatus: order.payment_status,
+      }, 409);
     }
 
     const expectedAmount = Number(order.payment_amount_minor);
@@ -104,6 +109,8 @@ Deno.serve(async (req) => {
     ) {
       return respond({
         error: "Payment details are missing. Please restart checkout.",
+        paid: false,
+        paymentStatus: "invalid",
       }, 400);
     }
 
@@ -121,23 +128,40 @@ Deno.serve(async (req) => {
     const verification = await paystackResponse.json();
 
     if (!paystackResponse.ok || !verification.status) {
-      return respond(
-        { error: verification.message || "Unable to verify payment." },
-        502
-      );
+      return respond({
+        error: verification.message || "Unable to verify payment.",
+        paid: false,
+        paymentStatus: "verification_error",
+      }, 502);
     }
 
     const transaction = verification.data;
 
+    if (transaction.reference !== reference) {
+      return respond({
+        error: "Payment reference does not match.",
+        paid: false,
+        paymentStatus: "invalid",
+      }, 400);
+    }
+
+    if (transaction.status !== "success") {
+      return respond({
+        message: "Payment has not been completed.",
+        paid: false,
+        paymentStatus: transaction.status || "pending",
+        reference,
+      });
+    }
+
     if (
-      transaction.status !== "success" ||
-      transaction.reference !== reference ||
       transaction.currency !== "GHS" ||
       transaction.amount !== expectedAmount
     ) {
       return respond({
-        error: "Payment has not been confirmed or the amount does not match.",
+        error: "Payment amount or currency does not match.",
         paid: false,
+        paymentStatus: "invalid",
       }, 400);
     }
 
@@ -156,12 +180,14 @@ Deno.serve(async (req) => {
     if (updateError) {
       console.error("Order payment update failed:", updateError);
       return respond({
-        error: "Payment was received but the order update failed. Please contact support.",
+        error:
+          "Payment was received but the order update failed. Please contact support.",
+        paid: false,
+        paymentStatus: "update_error",
       }, 500);
     }
 
     if (!updatedOrder) {
-      // Another verification request may have updated the order already.
       const { data: latestOrder } = await adminClient
         .from("orders")
         .select("payment_status")
@@ -169,17 +195,26 @@ Deno.serve(async (req) => {
         .maybeSingle();
 
       if (latestOrder?.payment_status !== "paid") {
-        return respond({ error: "Unable to confirm the order payment status." }, 409);
+        return respond({
+          error: "Unable to confirm the order payment status.",
+          paid: false,
+          paymentStatus: "verification_error",
+        }, 409);
       }
     }
 
     return respond({
       message: "Payment successfully verified.",
       paid: true,
+      paymentStatus: "success",
       reference,
     });
   } catch (error) {
     console.error("Verify payment error:", error);
-    return respond({ error: "An unexpected error occurred." }, 500);
+    return respond({
+      error: "An unexpected error occurred.",
+      paid: false,
+      paymentStatus: "verification_error",
+    }, 500);
   }
 });

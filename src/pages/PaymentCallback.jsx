@@ -52,17 +52,43 @@ function PaymentCallback() {
 
       if (!active) return;
 
-      if (error || !data?.paid) {
+      if (error || !data) {
         setStatus("failed");
         setMessage(
-          data?.error || error?.message || "We couldn't verify your payment."
+          error?.message || "We couldn't verify your payment. Please try again."
         );
         return;
       }
 
-      clearCart();
-      setStatus("success");
-      setMessage("Your payment was successfully verified!");
+      if (data.paid === true && data.paymentStatus === "success") {
+        clearCart();
+        setStatus("success");
+        setMessage("Your payment was successfully verified!");
+        return;
+      }
+
+      if (
+        data.paymentStatus === "failed" ||
+        data.paymentStatus === "abandoned"
+      ) {
+        setStatus("failed");
+        setMessage("Your payment was not completed. No successful payment was recorded.");
+        return;
+      }
+
+      if (data.paymentStatus === "pending" ||
+          data.paymentStatus === "ongoing") {
+        setStatus("pending");
+        setMessage("Your payment is still being processed. Please check your orders again shortly.");
+        return;
+      }
+
+      setStatus("failed");
+      setMessage(
+        data.error ||
+        data.message ||
+        "We couldn't confirm your payment. Please check your orders before trying again."
+      );
     };
 
     verifyPayment();
@@ -95,8 +121,8 @@ function PaymentCallback() {
               <strong>{reference}</strong>
             </div>
 
-            <Link to="/" className="primary-button">
-              Continue shopping
+            <Link to="/orders" className="primary-button">
+              View my orders
             </Link>
           </>
         )}
@@ -104,7 +130,7 @@ function PaymentCallback() {
         {status === "failed" && (
           <>
             <div className="payment-status-icon failed">!</div>
-            <h1>Payment not verified</h1>
+            <h1>Payment not completed</h1>
             <p>{message}</p>
 
             {reference && (
@@ -114,8 +140,25 @@ function PaymentCallback() {
               </div>
             )}
 
-            <Link to="/cart" className="primary-button">
-              Return to cart
+            <Link to="/orders" className="primary-button">
+              Check my orders
+            </Link>
+          </>
+        )}
+
+        {status === "pending" && (
+          <>
+            <div className="payment-spinner"></div>
+            <h1>Payment processing</h1>
+            <p>{message}</p>
+
+            <div className="order-confirmation">
+              <p>Payment reference</p>
+              <strong>{reference}</strong>
+            </div>
+
+            <Link to="/orders" className="primary-button">
+              Check my orders
             </Link>
           </>
         )}

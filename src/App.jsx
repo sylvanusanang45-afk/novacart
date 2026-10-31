@@ -17,6 +17,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import PaymentCallback from "./pages/PaymentCallback";
+import Orders from "./pages/Orders";
 
 function App() {
   return (
@@ -48,6 +49,15 @@ function App() {
           }
         />
 
+        <Route
+          path="/orders"
+          element={
+            <RequireAuth>
+              <Orders />
+            </RequireAuth>
+          }
+        />
+
         <Route path="/auth" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -75,7 +85,6 @@ function App() {
       </Routes>
 
       <Footer />
-
       <NovaAssistant />
     </StoreProvider>
   );

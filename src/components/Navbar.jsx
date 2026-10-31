@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Heart, Menu, ShoppingBag, X } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -69,6 +70,12 @@ function Navbar() {
           <NavLink to="/wishlist" onClick={closeMenu}>
             Wishlist
           </NavLink>
+
+          {user && (
+            <NavLink to="/orders" onClick={closeMenu}>
+              My Orders
+            </NavLink>
+          )}
 
           {role === "admin" && (
             <NavLink to="/admin" onClick={closeMenu}>

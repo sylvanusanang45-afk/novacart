@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   Package,
   ShoppingBag,
@@ -21,6 +22,8 @@ const emptyForm = {
   description: "",
 };
 
+const PAGE_SIZE = 1000;
+
 function AdminDashboard() {
   const { products, loading, error } = useProducts();
 
@@ -31,6 +34,73 @@ function AdminDashboard() {
   const [notice, setNotice] = useState("");
   const [actionError, setActionError] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  const [ordersCount, setOrdersCount] = useState(0);
+  const [customersCount, setCustomersCount] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchAdminStats() {
+      setStatsLoading(true);
+      setStatsError("");
+
+      try {
+        const { count, error: countError } = await supabase
+          .from("orders")
+          .select("id", { count: "exact", head: true });
+
+        if (countError) throw countError;
+
+        const customerIds = new Set();
+        let offset = 0;
+
+        while (true) {
+          const { data, error: customersError } = await supabase
+            .from("orders")
+            .select("user_id")
+            .range(offset, offset + PAGE_SIZE - 1);
+
+          if (customersError) throw customersError;
+
+          for (const order of data ?? []) {
+            if (order.user_id) {
+              customerIds.add(String(order.user_id));
+            }
+          }
+
+          if (!data || data.length < PAGE_SIZE) break;
+
+          offset += PAGE_SIZE;
+        }
+
+        if (!cancelled) {
+          setOrdersCount(count ?? 0);
+          setCustomersCount(customerIds.size);
+        }
+      } catch (err) {
+        console.error("Could not load NovaCart admin statistics:", err);
+
+        if (!cancelled) {
+          setStatsError(
+            "Couldn't load order statistics. Check that your admin account can read the orders table."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setStatsLoading(false);
+        }
+      }
+    }
+
+    fetchAdminStats();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -159,7 +229,6 @@ function AdminDashboard() {
 
       closeForm();
 
-      // Reload the catalogue so the dashboard displays fresh database data.
       window.location.reload();
     } catch (err) {
       console.error("NovaCart could not save the product:", err);
@@ -228,15 +297,21 @@ function AdminDashboard() {
         <article className="admin-stat">
           <ShoppingBag size={25} />
           <p>Orders</p>
-          <h2>0</h2>
+          <h2>{statsLoading ? "..." : ordersCount}</h2>
         </article>
 
         <article className="admin-stat">
           <Users size={25} />
           <p>Customers</p>
-          <h2>0</h2>
+          <h2>{statsLoading ? "..." : customersCount}</h2>
         </article>
       </div>
+
+      {statsError && (
+        <p className="admin-notice" role="alert">
+          {statsError}
+        </p>
+      )}
 
       <section className="admin-products">
         <div className="admin-products-heading">
@@ -469,8 +544,8 @@ function AdminDashboard() {
       </section>
 
       <p className="admin-notice">
-        Product changes are saved to Supabase. Order management and customer
-        analytics have not been implemented yet.
+        Product changes are saved to Supabase. Orders and customer counts are
+        calculated from the orders table.
       </p>
     </main>
   );
