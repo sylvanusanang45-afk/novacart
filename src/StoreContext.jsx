@@ -1,11 +1,14 @@
+
 import {
   createContext,
   useContext,
   useState,
-  useEffect
+  useEffect,
+  useMemo,
+  useCallback,
 } from "react";
 
-import { products } from "./data/products";
+import { useProducts } from "./hooks/useProducts";
 
 const StoreContext = createContext();
 
@@ -28,15 +31,30 @@ function writeStoredValue(key, value) {
 }
 
 export function StoreProvider({ children }) {
-  const [cart, setCart] = useState(() => {
-    const savedCart = readStoredValue("novacart-cart", []);
+  const {
+    products,
+    loading: productsLoading,
+    error: productsError,
+  } = useProducts();
 
-    if (!Array.isArray(savedCart)) return [];
+  const [savedCart, setSavedCart] = useState(() => {
+    const value = readStoredValue("novacart-cart", []);
+    return Array.isArray(value) ? value : [];
+  });
 
-    // Use the catalogue's current price and details instead of trusting
-    // stale or manually edited product data from localStorage.
+  const [wishlist, setWishlist] = useState(() => {
+    const value = readStoredValue("novacart-wishlist", []);
+    return Array.isArray(value) ? value : [];
+  });
+
+  const cart = useMemo(() => {
+    if (productsLoading || productsError) return [];
+
     return savedCart.flatMap((savedItem) => {
-      const product = products.find((item) => item.id === savedItem?.id);
+      const product = products.find(
+        (item) => String(item.id) === String(savedItem?.id)
+      );
+
       const quantity = Number(savedItem?.quantity);
 
       if (!product || !Number.isInteger(quantity) || quantity < 1) {
@@ -45,55 +63,55 @@ export function StoreProvider({ children }) {
 
       return [{ ...product, quantity }];
     });
-  });
+  }, [savedCart, products, productsLoading, productsError]);
 
-  const [wishlist, setWishlist] = useState(() => {
-    const savedWishlist = readStoredValue("novacart-wishlist", []);
+  const wishlistProducts = useMemo(() => {
+    if (productsLoading || productsError) return [];
 
-    if (!Array.isArray(savedWishlist)) return [];
-
-    return [...new Set(savedWishlist)].filter((id) =>
-      products.some((product) => product.id === id)
+    return products.filter((product) =>
+      wishlist.some((id) => String(id) === String(product.id))
     );
-  });
+  }, [products, wishlist, productsLoading, productsError]);
 
   useEffect(() => {
-    writeStoredValue("novacart-cart", cart);
-  }, [cart]);
+    if (!productsLoading && !productsError) {
+      writeStoredValue("novacart-cart", cart);
+    }
+  }, [cart, productsLoading, productsError]);
 
   useEffect(() => {
     writeStoredValue("novacart-wishlist", wishlist);
   }, [wishlist]);
 
   function addToCart(product) {
-    setCart((currentCart) => {
+    setSavedCart((currentCart) => {
       const existingProduct = currentCart.find(
-        (item) => item.id === product.id
+        (item) => String(item.id) === String(product.id)
       );
 
       if (existingProduct) {
         return currentCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+          String(item.id) === String(product.id)
+            ? {
+                ...item,
+                quantity: Number(item.quantity) + 1,
+              }
             : item
         );
       }
 
-      return [
-        ...currentCart,
-        { ...product, quantity: 1 },
-      ];
+      return [...currentCart, { ...product, quantity: 1 }];
     });
   }
 
   function changeQuantity(id, amount) {
-    setCart((currentCart) =>
+    setSavedCart((currentCart) =>
       currentCart
         .map((item) =>
-          item.id === id
+          String(item.id) === String(id)
             ? {
                 ...item,
-                quantity: item.quantity + amount,
+                quantity: Number(item.quantity) + amount,
               }
             : item
         )
@@ -102,22 +120,24 @@ export function StoreProvider({ children }) {
   }
 
   function removeFromCart(id) {
-    setCart((currentCart) =>
-      currentCart.filter((item) => item.id !== id)
+    setSavedCart((currentCart) =>
+      currentCart.filter((item) => String(item.id) !== String(id))
     );
   }
+
+  const clearCart = useCallback(() => {
+    setSavedCart([]);
+  }, []);
 
   function toggleWishlist(id) {
     setWishlist((currentWishlist) =>
-      currentWishlist.includes(id)
-        ? currentWishlist.filter((itemId) => itemId !== id)
+      currentWishlist.some((itemId) => String(itemId) === String(id))
+        ? currentWishlist.filter(
+            (itemId) => String(itemId) !== String(id)
+          )
         : [...currentWishlist, id]
     );
   }
-
-  const wishlistProducts = products.filter((product) =>
-    wishlist.includes(product.id)
-  );
 
   const cartCount = cart.reduce(
     (total, item) => total + item.quantity,
@@ -125,13 +145,16 @@ export function StoreProvider({ children }) {
   );
 
   const cartTotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + Number(item.price) * item.quantity,
     0
   );
 
   return (
     <StoreContext.Provider
       value={{
+        products,
+        productsLoading,
+        productsError,
         cart,
         wishlist,
         wishlistProducts,
@@ -140,6 +163,7 @@ export function StoreProvider({ children }) {
         addToCart,
         changeQuantity,
         removeFromCart,
+        clearCart,
         toggleWishlist,
       }}
     >

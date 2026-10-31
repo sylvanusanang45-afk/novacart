@@ -7,7 +7,7 @@ import { useProducts } from "../hooks/useProducts";
 import ProductCard from "../components/ProductCard";
 
 function Shop() {
-  const { products } = useProducts();
+  const { products, loading, error } = useProducts();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Everything");
   const [sortBy, setSortBy] = useState("featured");
@@ -24,7 +24,6 @@ function Shop() {
       const matchesSearch = searchableText.includes(normalizedSearch);
       const matchesCategory =
         category === "Everything" || product.category === category;
-
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
@@ -40,6 +39,31 @@ function Shop() {
           return products.indexOf(a) - products.indexOf(b);
       }
     });
+
+if (loading) {
+  return (
+    <main className="page-container shop-page">
+      <p>Loading your collection...</p>
+    </main>
+  );
+}
+
+if (error) {
+  return (
+    <main className="page-container shop-page">
+      <div className="empty-state">
+        <h2>We couldn't load the collection.</h2>
+        <p>{error}</p>
+        <button
+          className="primary-button"
+          onClick={() => window.location.reload()}
+        >
+          Try again
+        </button>
+      </div>
+    </main>
+  );
+}
 
   return (
     <main className="page-container shop-page">

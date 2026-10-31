@@ -2,16 +2,43 @@ import { useParams, Link } from "react-router-dom";
 
 import { ArrowLeft, Heart, ShoppingBag } from "lucide-react";
 
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 import { useStore } from "../StoreContext";
 
 function ProductDetails() {
   const { id } = useParams();
+  const { products, loading, error } = useProducts();
 
   const product = products.find(
-    (item) => item.id === Number(id)
+    (item) => String(item.id) === id
   );
 
+
+    if (loading) {
+    return (
+      <main className="page-container">
+        <p>Loading product details...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="page-container">
+        <div className="empty-state">
+          <h2>We couldn't load this product.</h2>
+          <p>{error}</p>
+          <button
+            className="primary-button"
+            onClick={() => window.location.reload()}
+          >
+            Try again
+          </button>
+        </div>
+      </main>
+    );
+  }
+  
   const {
     addToCart,
     wishlist,

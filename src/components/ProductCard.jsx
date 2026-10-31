@@ -1,3 +1,4 @@
+
 import { Heart, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useStore } from "../StoreContext";
@@ -9,7 +10,9 @@ function ProductCard({ product }) {
     addToCart,
   } = useStore();
 
-  const isFavourite = wishlist.includes(product.id);
+  const isFavourite = wishlist.some(
+    (id) => String(id) === String(product.id)
+  );
 
   return (
     <article className="product-card">
@@ -31,6 +34,7 @@ function ProductCard({ product }) {
         )}
 
         <button
+          type="button"
           className={`wishlist-button ${
             isFavourite ? "active" : ""
           }`}
@@ -68,17 +72,18 @@ function ProductCard({ product }) {
         <div className="product-bottom">
           <div className="product-prices">
             <span className="product-price">
-              ${product.price.toFixed(2)}
+              ${Number(product.price).toFixed(2)}
             </span>
 
-            {product.oldPrice && (
+            {product.oldPrice != null && (
               <span className="old-price">
-                ${product.oldPrice.toFixed(2)}
+                ${Number(product.oldPrice).toFixed(2)}
               </span>
             )}
           </div>
 
           <button
+            type="button"
             className="add-to-cart-button"
             onClick={() => addToCart(product)}
             aria-label={`Add ${product.name} to cart`}

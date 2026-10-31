@@ -1,0 +1,385 @@
+
+.nova-assistant {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 9999;
+  font-family: inherit;
+}
+
+/* Floating button */
+
+.nova-toggle {
+  width: 62px;
+  height: 62px;
+  border: none;
+  border-radius: 50%;
+  background: #171717;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: 0.25s ease;
+}
+
+.nova-toggle:hover {
+  transform: translateY(-4px);
+  background: #333;
+}
+
+.nova-toggle.active {
+  background: #444;
+}
+
+/* Chat window */
+
+.nova-chat-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 370px;
+  height: 540px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 15px 55px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #eee;
+  animation: nova-appear 0.25s ease;
+}
+
+@keyframes nova-appear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header */
+
+.nova-chat-header {
+  background: #171717;
+  color: white;
+  padding: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nova-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nova-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nova-header-info h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.nova-header-info span {
+  font-size: 11px;
+  color: #c4c4c4;
+}
+
+.nova-online-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #4ade80;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.nova-close {
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  padding: 5px;
+}
+
+/* Chat body */
+
+.nova-chat-body {
+  flex: 1;
+  padding: 17px;
+  overflow-y: auto;
+  background: #fafafa;
+}
+
+.nova-welcome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #777;
+  margin-bottom: 22px;
+}
+
+.nova-message {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 17px;
+  align-items: flex-end;
+}
+
+.nova-message.user {
+  justify-content: flex-end;
+}
+
+.nova-message-avatar {
+  width: 29px;
+  height: 29px;
+  min-width: 29px;
+  border-radius: 50%;
+  background: #e9e9e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+.nova-message-content {
+  max-width: 82%;
+  padding: 12px 14px;
+  border-radius: 15px;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.nova-message.assistant .nova-message-content {
+  background: white;
+  color: #333;
+  border: 1px solid #eee;
+  border-bottom-left-radius: 4px;
+}
+
+.nova-message.user .nova-message-content {
+  background: #171717;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* Suggestions */
+
+.nova-suggestions {
+  margin: 20px 0 10px 37px;
+}
+
+.nova-suggestions p {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.nova-suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nova-suggestions button:hover {
+  border-color: #171717;
+  background: #f5f5f5;
+}
+
+/* Typing indicator */
+
+.nova-typing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  color: #777;
+  font-size: 12px;
+}
+
+.nova-spinner {
+  animation: nova-spin 1s linear infinite;
+}
+
+@keyframes nova-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Input */
+
+.nova-chat-input {
+  padding: 13px;
+  display: flex;
+  gap: 9px;
+  background: white;
+  border-top: 1px solid #eee;
+}
+
+.nova-chat-input input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #e5e5e5;
+  outline: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 13px;
+}
+
+.nova-chat-input input:focus {
+  border-color: #777;
+}
+
+.nova-chat-input button {
+  width: 43px;
+  min-width: 43px;
+  border: none;
+  border-radius: 12px;
+  background: #171717;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.nova-chat-input button:hover {
+  background: #444;
+}
+
+.nova-chat-input button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .nova-assistant {
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .nova-chat-window {
+    position: fixed;
+    bottom: 85px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    height: min(540px, calc(100dvh - 115px));
+  }
+
+  .nova-toggle {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+
+/* AI product recommendations */
+
+.nova-product-recommendations {
+  margin: 0 0 20px 37px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nova-product-card {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 13px;
+  text-decoration: none;
+  color: #171717;
+  transition: 0.2s ease;
+}
+
+.nova-product-card:hover {
+  border-color: #aaa;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+}
+
+.nova-product-card img {
+  width: 76px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 9px;
+  background: #f3f3f3;
+}
+
+.nova-product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.nova-product-info h4 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 7px;
+}
+
+.nova-product-price {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nova-product-price del {
+  color: #999;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.nova-product-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #666;
+}

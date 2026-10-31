@@ -1,11 +1,37 @@
 import { ArrowRight, Leaf, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { products } from "../data/products";
+import { useProducts } from "../hooks/useProducts";
 import ProductCard from "../components/ProductCard";
 
 function Home() {
+  const { products, loading, error } = useProducts();
   const featuredProducts = products.slice(0, 4);
+
+    if (loading) {
+    return (
+      <main className="page-container">
+        <p>Loading your featured products...</p>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="page-container">
+        <div className="empty-state">
+          <h2>We couldn't load our collection.</h2>
+          <p>{error}</p>
+          <button
+            className="primary-button"
+            onClick={() => window.location.reload()}
+          >
+            Try again
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>

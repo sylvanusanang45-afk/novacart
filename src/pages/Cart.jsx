@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
 
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
-
 import { useStore } from "../StoreContext";
 
 function Cart() {
@@ -12,6 +11,13 @@ function Cart() {
     changeQuantity,
     removeFromCart,
   } = useStore();
+
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    if (cart.length === 0) return;
+    navigate("/checkout");
+  };
 
   return (
     <main className="page-container cart-page">
@@ -48,7 +54,7 @@ function Cart() {
                 <div className="cart-item-information">
                   <h3>{item.name}</h3>
 
-                  <p>${item.price.toFixed(2)} each</p>
+                  <p>${Number(item.price).toFixed(2)} each</p>
 
                   <div className="quantity-controls">
                     <button
@@ -71,7 +77,7 @@ function Cart() {
 
                 <div className="cart-item-end">
                   <strong>
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${(Number(item.price) * item.quantity).toFixed(2)}
                   </strong>
 
                   <button
@@ -116,11 +122,7 @@ function Cart() {
 
             <button
               className="primary-button checkout-button"
-              onClick={() =>
-                alert(
-                  "Checkout will be connected when we implement payments."
-                )
-              }
+              onClick={handleCheckout}
             >
               Continue to checkout
             </button>
