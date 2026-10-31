@@ -55,12 +55,14 @@ function PaymentCallback() {
       if (error || !data) {
         setStatus("failed");
         setMessage(
-          error?.message || "We couldn't verify your payment. Please try again."
+          error?.message ||
+            "We couldn't verify your payment. Please try again."
         );
         return;
       }
 
-      if (data.paid === true && data.paymentStatus === "success") {
+      // A payment is successful only when the backend confirms paid: true.
+      if (data.paid === true) {
         clearCart();
         setStatus("success");
         setMessage("Your payment was successfully verified!");
@@ -72,22 +74,28 @@ function PaymentCallback() {
         data.paymentStatus === "abandoned"
       ) {
         setStatus("failed");
-        setMessage("Your payment was not completed. No successful payment was recorded.");
+        setMessage(
+          "Your payment was not completed. No successful payment was recorded."
+        );
         return;
       }
 
-      if (data.paymentStatus === "pending" ||
-          data.paymentStatus === "ongoing") {
+      if (
+        data.paymentStatus === "pending" ||
+        data.paymentStatus === "ongoing"
+      ) {
         setStatus("pending");
-        setMessage("Your payment is still being processed. Please check your orders again shortly.");
+        setMessage(
+          "Your payment is still being processed. Please check your orders again shortly."
+        );
         return;
       }
 
       setStatus("failed");
       setMessage(
         data.error ||
-        data.message ||
-        "We couldn't confirm your payment. Please check your orders before trying again."
+          data.message ||
+          "We couldn't confirm your payment. Please check your orders before trying again."
       );
     };
 
