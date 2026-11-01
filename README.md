@@ -6,24 +6,15 @@ NovaCart is a full-stack e-commerce web application built with React, Supabase, 
 
 ##  Live Demo
 
-[Visit NovaCart](https://novacart-mauve.vercel.app)
+[Visit NovaCart](https://novacart-mauve.vercel.app
 
-## Screenshots
+##  Screenshots
 
-### Homepage
-![NovaCart Homepage](screenshots/homepage.png)
+![NovaCart Screenshot 1](https://github.com/user-attachments/assets/973d3dc7-e539-4593-b454-ce94b9f3ba10)
 
-### Shop
-![NovaCart Shop](screenshots/shop.png)
+![NovaCart Screenshot 2](https://github.com/user-attachments/assets/3163e91c-eb3c-4877-b96c-94d5698a7b52)
 
-### Product Details
-![Product Details](screenshots/product-details.png)
-
-### Admin Dashboard
-![NovaCart Admin Dashboard](screenshots/admin-dashboard.png)
-
-### AI Shopping Assistant
-![NovaCart AI Assistant](screenshots/ai-assistant.png)
+![NovaCart Screenshot 3](https://github.com/user-attachments/assets/c9fc2ac6-2094-48c4-9cde-4e431a579266)
 
 ## ✨ Features
 
