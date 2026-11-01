@@ -10,11 +10,15 @@ NovaCart is a full-stack e-commerce web application built with React, Supabase, 
 
 ##  Screenshots
 
-![NovaCart Screenshot 1](https://github.com/user-attachments/assets/973d3dc7-e539-4593-b454-ce94b9f3ba10)
+<img width="1366" alt="NovaCart Screenshot 1" src="https://github.com/user-attachments/assets/973d3dc7-e539-4593-b454-ce94b9f3ba10" />
 
-![NovaCart Screenshot 2](https://github.com/user-attachments/assets/3163e91c-eb3c-4877-b96c-94d5698a7b52)
+<img width="1366" alt="NovaCart Screenshot 2" src="https://github.com/user-attachments/assets/3163e91c-eb3c-4877-b96c-94d5698a7b52" />
 
-![NovaCart Screenshot 3](https://github.com/user-attachments/assets/c9fc2ac6-2094-48c4-9cde-4e431a579266)
+<img width="1366" alt="NovaCart Screenshot 3" src="https://github.com/user-attachments/assets/c9fc2ac6-2094-48c4-9cde-4e431a579266" />
+
+<img width="1366" alt="NovaCart Screenshot 4" src="https://github.com/user-attachments/assets/028a4ba2-d065-4638-8f9a-3630f3d7ce94" />
+
+<img width="1366" alt="NovaCart Screenshot 5" src="https://github.com/user-attachments/assets/5324d55c-1929-4ddc-a7a8-d61e2f32734b" />
 
 ## ✨ Features
 
