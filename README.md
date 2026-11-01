@@ -1,10 +1,10 @@
-# NovaCart 🛍️
+# NovaCart 
 
 **A modern e-commerce platform with AI-powered shopping assistance.**
 
 NovaCart is a full-stack e-commerce web application built with React, Supabase, and Paystack. It provides a complete shopping experience, from browsing products and managing a wishlist to secure checkout, payment processing, and order tracking.
 
-## 🚀 Live Demo
+##  Live Demo
 
 [Visit NovaCart](https://novacart-mauve.vercel.app)
 
@@ -42,7 +42,7 @@ NovaCart is a full-stack e-commerce web application built with React, Supabase, 
 - Monitor customer and order statistics.
 - Database-level access control using Supabase Row Level Security.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Technology | Purpose |
 |---|---|
@@ -55,7 +55,7 @@ NovaCart is a full-stack e-commerce web application built with React, Supabase, 
 | Paystack | Payment processing |
 | Vercel | Deployment |
 
-## ⚙️ Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Node.js (LTS recommended)
@@ -103,7 +103,7 @@ npm run dev
 npm run build
 ```
 
-## 🔐 Backend and Services
+##  Backend and Services
 
 NovaCart uses Supabase for authentication, database operations, and server-side functionality through Edge Functions.
 
