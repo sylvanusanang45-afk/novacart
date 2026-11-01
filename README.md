@@ -111,13 +111,13 @@ The application also uses Paystack for payment initialization and verification.
 
 To run the complete application in your own environment, configure the required Supabase database tables, Row Level Security policies, Edge Functions, and server-side secrets.
 
-## 🌐 Deployment
+##  Deployment
 
 The frontend is deployed on Vercel.
 
 **Live URL:** https://novacart-mauve.vercel.app
 
-## 👨‍💻 Author
+##  Author
 
 **Sylvanus Anang**
 
